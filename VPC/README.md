@@ -20,4 +20,4 @@ The custom VPC (`175.30.0.0/24`) is configured with two public subnets and two p
 ## Verification
 Outbound connectivity from a private EC2 instance was verified using `curl` to reach external HTTPS endpoints through the NAT Gateway proxy:
 
-![NAT Egress Curl Test](assets/curl-success.png)
+![NAT Egress Curl Test](images/Instance%20result.jpg)
