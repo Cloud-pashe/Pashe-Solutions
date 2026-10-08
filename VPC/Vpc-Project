@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+#First we create our vpc
+aws ec2 create-vpc --cidr-block "175.30.0.0/24" --region us-east-1
+
+#Secondly we identify availabilty zones
+aws ec2 describe-availability-zones --query 'AvailabilityZones[0:2].ZoneName' --region us-east-1 --output text
+
+#we create our subnets (Public and Private) in both Availability zone
+aws ec2 create-subnet \
+  --vpc-id vpc-0b3fd82dcebcd3f0e \
+  --cidr-block 175.30.0.0/26 \
+  --availability-zone us-east-1a \
+  --region us-east-1 \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=PublicSubnet1}]'
+
+aws ec2 create-subnet \
+  --vpc-id vpc-0b3fd82dcebcd3f0e \
+  --cidr-block 175.30.0.64/26 \
+  --availability-zone us-east-1a \
+  --region us-east-1 \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=PrivateSubnet1}]'
+
+aws ec2 create-subnet \
+  --vpc-id vpc-0b3fd82dcebcd3f0e \
+  --cidr-block 175.30.0.128/26 \
+  --availability-zone us-east-1b \
+  --region us-east-1 \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=PulicSubnet2}]'
+
+aws ec2 create-subnet \
+  --vpc-id vpc-0b3fd82dcebcd3f0e \
+  --cidr-block 175.30.0.192/26 \
+  --availability-zone us-east-1b \
+  --region us-east-1 \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=PrivateSubnet2}]'
+
+#Create our Internet Gateway
+aws ec2 create-internet-gateway \
+    --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=MYigw}]' --region us-east-1
+
+#Attach the Internet Gateway to the Vpc
+aws ec2 attach-internet-gateway \
+    --internet-gateway-id igw-003165265f086769e \
+    --vpc-id vpc-0b3fd82dcebcd3f0e \
+    --region us-east-1
+
+#Create our Route table
+aws ec2 create-route-table --vpc-id vpc-0b3fd82dcebcd3f0e --region us-east-1
+aws ec2 create-route-table --vpc-id vpc-0b3fd82dcebcd3f0e --region us-east-1 --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=Private-route-table}]'
+
+
+#Associate our subnets with our route table
+aws ec2 associate-route-table --route-table-id rtb-06f0d933e856b58cf --subnet-id subnet-0ea4231bf6796757a --region us-east-1
+aws ec2 associate-route-table --route-table-id rtb-0c57d24ab9de1ebe1 --subnet-id subnet-02dcc13cff1fa9126 --region us-east-1
+
+#create route to link the subnets to the internet gateway through the route table
+aws ec2 create-route --route-table-id rtb-06f0d933e856b58cf \
+    --destination-cidr-block 0.0.0.0/0 \
+    --gateway-id igw-003165265f086769e \
+    --region us-east-1
+aws ec2 create-route --route-table-id rtb-0c57d24ab9de1ebe1 \
+    --destination-cidr-block 0.0.0.0/0 \
+    --gateway-id nat-0f164bd5ac01d53b2 \
+    --region us-east-1
+
+#Allocate elastic IP address
+aws ec2 allocate-address --tag-specifications 'ResourceType=elastic-ip,Tags=[{Key=Name,Value=project-eip}]' --region us-east-1
+
+#Create our NAT gateway
+aws ec2 create-nat-gateway \
+    --subnet-id subnet-09383556e45538968 \
+    --allocation-id eipalloc-07b11ac875bb8cabd \
+    --region us-east-1
