@@ -1,4 +1,4 @@
-Goal: Create a multi-AZ custom Virtual Private Cloud (VPC) from scratch.
+# Goal: Create a multi-AZ custom Virtual Private Cloud (VPC) from scratch.
 
 Core Components:Custom CIDR block.
 2 Public Subnets and 2 Private Subnets across two Availability Zones.   
