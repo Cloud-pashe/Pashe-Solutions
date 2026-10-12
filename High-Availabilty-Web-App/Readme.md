@@ -17,14 +17,14 @@ The Multi-AZ VPC Architecture spans across multiple availability zones to ensure
 
 The ALB security group accepts inbound HTTP (80) traffic from the internet (0.0.0.0/0), while the web server security group (web-server-sg) only accepts traffic coming from the ALB's security group.
 
-ALB:
+### ALB:
 ![Security Group inbound rule](images/SG%20ALB.jpg) 
-Web Server:
+### Web Server:
 ![Security Group inbound rule](images/SG%20Web%20Server.jpg)
 
 The target group listening on the ALB does health checks on the private instances, proving that Apache is running successfully via the updated launch template. Only when the instance pass the checks,  would it be able to access our web application
 
-Target Group:
+### Target Group:
 ![Web Target Group](images/My%20Web%20Target%20Group.jpg)
-Connecting to our Web Application(Result):
+### Connecting to our Web Application(Result):
 ![Web App Result](images/Web%20Application%20Result.jpg)
