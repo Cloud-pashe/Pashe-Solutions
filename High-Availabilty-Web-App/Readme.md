@@ -11,6 +11,9 @@ Target Groups for health checking EC2 fleet instances.
 
 # RESULTS & EXPLANATION
 
+### High Availability Web App Architecture Design
+![Architecture Design](images/Multi-AZ%20AWS%20Architecture.jpg)
+
 The Multi-AZ VPC Architecture spans across multiple availability zones to ensure high availabilty and fault tolerance. The public subnets hosts the alb and nat gateway fot internet connectivity, while the private subnets securely isolate the EC2 web servers from direct public exposure while routing outbound traffic through the NAT Gateway.
 
 ![AWS VPC Resource Map](images/Multi%20AZ%20VPC.jpg)
