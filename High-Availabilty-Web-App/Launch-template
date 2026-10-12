@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# create security group for web server
+aws ec2 create-security-group \
+    --group-name web-server-sg \
+    --description "Web security Group" \
+    --vpc-id vpc-027bd1731baaf873b \
+    --region us-east-1
+
+# create launch template for web server
+aws ec2 create-launch-template \
+    --launch-template-name my-web-app-template \
+    --version-description "v1 with user data" \
+    --region us-east-1 \
+    --launch-template-data '{
+        "ImageId": "ami-0c7217cdde317cfec",
+        "InstanceType": "t3.micro",
+        "SecurityGroupIds":["sg-02105723494af6adc"] ,
+        "UserData": "'"$(base64 -w 0 user_data.sh)"'"
+    }'
+
+# create security group for web Application Load Balancer (ALB)
+aws ec2 create-security-group \
+    --group-name web-alb-sg \
+    --description "Security group for web ALB" \
+    --vpc-id vpc-027bd1731baaf873b \
+    --region us-east-1
+
+# create Application Load Balancer (ALB) using the security group and subnets we created earlier
+aws elbv2 create-load-balancer \
+    --name my-web-alb \
+    --subnets subnet-0468c8d7fe82bd77d subnet-0dd28e1b3350c73a3 \
+    --security-groups sg-00e4faa1d4a6ee6b3 \
+    --region us-east-1
+
+# create security group rules to allow inbound traffic on port 80 for the web server and ALB
+aws ec2 authorize-security-group-ingress \
+    --group-id sg-00e4faa1d4a6ee6b3 \
+    --protocol tcp \
+    --port 80 \
+    --cidr 0.0.0.0/0 \
+    --region us-east-1
+
+# create security group rules to allow inbound traffic on port 80 from the ALB security group to the web server security group
+aws ec2 authorize-security-group-ingress \
+    --group-id sg-02105723494af6adc \
+    --protocol tcp \
+    --port 80 \
+    --source-group sg-00e4faa1d4a6ee6b3 \
+    --region us-east-1
+
+# create target group for the web server instances
+aws elbv2 create-target-group \
+    --name my-web-target-group \
+    --protocol HTTP \
+    --port 80 \
+    --vpc-id vpc-027bd1731baaf873b \
+    --target-type instance \
+    --region us-east-1
+
+# create listener for the ALB to forward traffic to the target group
+aws elbv2 create-listener \
+    --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:535562976820:loadbalancer/app/my-web-alb/130c4113d3ded6dc \
+    --protocol HTTP \
+    --port 80 \
+    --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-east-1:535562976820:targetgroup/my-web-target-group/54c1e1591c7ed7db \
+    --region us-east-1
+
+# create auto scaling group for the web server instances using the launch template and target group
+aws autoscaling create-auto-scaling-group \
+    --auto-scaling-group-name my-web-asg \
+    --launch-template LaunchTemplateName=my-web-app-template,Version='$Latest' \
+    --min-size 2 \
+    --max-size 4 \
+    --desired-capacity 2 \
+    --vpc-zone-identifier "subnet-089e9246c4f9a1ee0,subnet-035ebf2d5ee1fdd2e" \
+    --target-group-arns "arn:aws:elasticloadbalancing:us-east-1:535562976820:targetgroup/my-web-target-group/54c1e1591c7ed7db" \
+    --region us-east-1

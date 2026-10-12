@@ -13,7 +13,7 @@ Route Tables configured for public vs. private network paths.
 ## AWS VPC Network Architecture & Egress Testing
 
 ### Architecture Overview
-The custom VPC (`175.30.0.0/24`) is configured with two public subnets and two private subnets. Traffic from private subnets is routed through a NAT Gateway for outbound egress.
+The custom VPC (`180.0.0.0/16`) is configured with two public subnets and two private subnets. Traffic from private subnets is routed through a NAT Gateway for outbound egress.
 
 ![AWS VPC Resource Map](images/Multi-AZ%20VPC.jpg)
 
