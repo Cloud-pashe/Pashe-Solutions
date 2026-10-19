@@ -14,8 +14,7 @@ phases:
       - echo "Build phase: Preparing build artifacts..."
   post_build:
     commands:
-      - echo "Post-build phase: Build completed successfully"
-
+      - echo "Post-build phase: Build completed successfully on $(date)"
 artifacts:
   files:
     - index.html
