@@ -6,10 +6,10 @@ phases:
       python: 3.9
   build:
     commands:
-      - echo "Build phase: Preparing build artifacts..."
+      - echo Preparing build artifacts...
   post_build:
     commands:
-      - echo "Post-build phase: Build completed successfully on $(date)"
+      - echo Build completed successfully on $(date)
 artifacts:
   files:
     - CICD-Web-App/index.html
