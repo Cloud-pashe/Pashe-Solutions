@@ -14,11 +14,11 @@ phases:
       - echo "Build phase: Preparing build artifacts..."
   post_build:
     commands:
-      - echo "Post-build phase: Build completed successfully on $(date)"
+      - echo "Post-build phase: Build completed successfully"
 
 artifacts:
   files:
     - index.html
     - appspec.yml
-    - scripts/**/*
+    - scripts/***
   name: cicd-web-app-build-artifact
