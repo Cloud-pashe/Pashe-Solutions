@@ -12,7 +12,7 @@ phases:
       - echo Build completed successfully on $(date)
 artifacts:
   files:
-    - CICD-Web-App/index.html
-    - CICD-Web-App/appspec.yml
-    - CICD-Web-App/scripts/***
+    - CICD-web-app/index.html
+    - CICD-web-app/appspec.yml
+    - CICD-web-app/scripts/***
   name: cicd-web-app-build-artifact
