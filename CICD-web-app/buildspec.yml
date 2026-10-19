@@ -4,11 +4,6 @@ phases:
   install:
     runtime-versions:
       python: 3.9
-  pre_build:
-    commands:
-      - echo "Pre-build phase: Validating application files..."
-      - test -f index.html
-      - test -f appspec.yml
   build:
     commands:
       - echo "Build phase: Preparing build artifacts..."
@@ -17,7 +12,7 @@ phases:
       - echo "Post-build phase: Build completed successfully on $(date)"
 artifacts:
   files:
-    - index.html
-    - appspec.yml
-    - scripts/***
+    - CICD-Web-App/index.html
+    - CICD-Web-App/appspec.yml
+    - CICD-Web-App/scripts/***
   name: cicd-web-app-build-artifact
