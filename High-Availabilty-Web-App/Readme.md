@@ -1,11 +1,13 @@
-# Goal: Deploy a resilient web application that automatically scales during traffic spikes.   
+# Auto Scailing High Availability Web App
 
-Core Components:
-Multi AZ VPC Architecture
-Application Load Balancer (ALB) receiving public HTTP/HTTPS traffic. 
-Auto Scaling Group (ASG) launching EC2 instances across private subnets in multiple AZs.  
-Custom Launch Template with user-data Bash scripts provisioning Apache/Nginx.
-Target Groups for health checking EC2 fleet instances.
+## Goal: Deploy a resilient web application that automatically scales during traffic spikes.   
+
+**Core Components:**
+- Multi AZ VPC Architecture
+- Application Load Balancer (ALB) receiving public HTTP/HTTPS traffic. 
+- Auto Scaling Group (ASG) launching EC2 instances across private subnets in multiple AZs.  
+- Custom Launch Template with user-data Bash scripts provisioning Apache/Nginx.
+- Target Groups for health checking EC2 fleet instances.
 
 ### Note: The user data script embedded in the launch template automates the installation and configuration of the web application, ensuring that any new instance provisioned by the Auto Scaling Group is immediately ready without manual deployment overhead.
 
